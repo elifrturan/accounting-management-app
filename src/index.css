@@ -1,0 +1,78 @@
+:root {
+  /* Primary Colors */
+  --color-primary: #1F3A5F;
+  --color-primary-light: #2E4E7E;
+  --color-primary-dark: #162B46;
+
+  /* Neutral Colors */
+  --color-bg-main: #020617;
+  --color-bg-soft: #F9FAFB;
+
+  /* Text Colors */
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #64748B;
+  --color-text-muted: #94A3B8;
+
+  /* Border & UI */
+  --color-border: #E5E7EB;
+  --color-shadow: rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 2.25rem;
+}
+
+span {
+  font-size: 1rem;
+}
+
+.form-control:focus {
+  border: 1px solid var(--color-primary) !important;
+  outline: none;
+  box-shadow: none !important;
+}
+
+::placeholder {
+  font-size: 0.85rem !important;
+  opacity: 0.9 !important;
+}
+
+.modal-header .modal-title {
+  font-size: 1.25rem;
+}
+
+.modal-header .btn-close {
+  font-size: 0.8rem;
+}
+
+.modal-body span, li {
+  font-size: 0.78rem;
+  opacity: 0.9;
+}
+
+.modal-body h5 {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.modal-footer button {
+  padding: 1% 5%;
+  border-radius: 5pc;
+  transition: all 0.3s ease-in-out;
+  font-size: 0.9rem;
+}
+
+.modal-footer button:first-child {
+  background: none;
+  color: var(--color-primary);
+  border: 1px solid var(--color-text-secondary);
+}
+
+.modal-footer button:last-child {
+  background-color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.modal-footer button:hover {
+  transform: scale(1.05);
+}

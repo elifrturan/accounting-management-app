@@ -1,0 +1,98 @@
+.login-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-page .login-header {
+  text-align: center;
+}
+
+.login-page .login-header h1 {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: -0.5px;
+}
+
+.login-page .login-header p {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  max-width: 340px;
+  margin: 0.25rem auto 0;
+  opacity: 0.9;
+}
+
+.login-page .login-card {
+  background-color: #fff;
+  padding: 1.8rem;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.08);
+  border: 1px solid var(--color-border);
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+/* Icon */
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+  transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+  color: var(--color-primary);
+}
+
+/* Input sağdan ikonla çakışmasın */
+.password-wrapper input {
+  padding-right: 42px;
+}
+
+
+.login-page .login-button button {
+  width: 100%;
+  margin-top: 1rem;
+  border-radius: 5pc !important;
+  background-color: var(--color-primary) !important;
+  border: 1px solid var(--color-primary) !important;
+  transition: all 0.3s ease-in-out;
+}
+
+.login-page .login-button button:hover {
+  transform: scale(1.05);
+}
+
+.login-page .have-account {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-page .have-account span {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.login-page .have-account .text-bold {
+  color: var(--color-primary);
+  font-weight: 700;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  padding: 0 !important;
+}
+
+.login-page .have-account .text-bold:hover {
+    transform: scale(1.05);
+}
