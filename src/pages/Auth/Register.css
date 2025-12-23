@@ -27,11 +27,76 @@
 }
 
 .register-card {
-   background-color: #fff;
+   background-color: var(--color-white);
   padding: 1.8rem;
   border-radius: 18px;
   box-shadow: 0 20px 40px rgba(2, 6, 23, 0.08);
   border: 1px solid var(--color-border);
+}
+
+.register-card .password-strength {
+  margin-top: 6px;
+}
+
+.register-card .strength-bar {
+  height: 6px;
+  border-radius: 4px;
+  background-color: var(--color-border);
+  overflow: hidden;
+  position: relative;
+}
+
+.register-card .strength-bar::after {
+  content: "";
+  position: absolute;
+  height: 100%;
+  left: 0;
+  top: 0;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.register-card .strength-0::after {
+  width: 10%;
+  background-color: var(--color-danger);
+}
+
+.register-card .strength-1::after {
+  width: 25%;
+  background-color: var(--color-danger);
+}
+
+.register-card .strength-2::after {
+  width: 50%;
+  background-color: var(--color-warning);
+}
+
+.register-card .strength-3::after {
+  width: 75%;
+  background-color: var(--color-primary-light);
+}
+
+.register-card .strength-4::after {
+  width: 100%;
+  background-color: var(--color-success);
+}
+
+.register-card .strength-text {
+  font-size: 12px;
+  margin-top: 4px;
+  color: var(--color-text-primary);
+}
+
+.register-card .password-info {
+  display: inline-block;
+  margin-left: 6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: var(--color-border);
+  color: var(--color-text-primary);
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
 }
 
 .register-page .register-card .contract-group span {
@@ -50,14 +115,6 @@
 
 .register-page .register-button button:hover {
   transform: scale(1.05);
-}
-
-.register-hint {
-  display: block;
-  text-align: center;
-  font-size: 0.7rem;
-  color: var(--color-text-muted);
-  margin-top: 0.75rem;
 }
 
 .register-page .have-account {

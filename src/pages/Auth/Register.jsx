@@ -1,14 +1,71 @@
-import { Button, Form, InputGroup, Modal } from "react-bootstrap"
+import { Alert, Button, Form, Modal, Overlay, OverlayTrigger, Tooltip } from "react-bootstrap"
 import "./Register.css"
 import { useState } from "react"
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { register } from "../../api/authService";
 
 function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showContract, setShowContract] = useState(false);
     const [acceptedContract, setAcceptedContract] = useState(false);
+    const [fieldErrors, setFieldErrors] = useState({});
+    const [successMessage, setSuccessMessage] = useState("");
+    const [passwordStrength, setPasswordStrength] = useState(0);
+    const [showPasswordTooltip, setShowPasswordTooltip] = useState(false);
+
     const navigate = useNavigate();
+
+    const [form, setForm] = useState({
+        companyName: "",
+        fullName: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+    });
+
+    const handleSubmit = async () => {
+        setFieldErrors({});
+        setSuccessMessage("");
+
+        try {
+            await register({
+                companyName: form.companyName,
+                fullName: form.fullName,
+                email: form.email,
+                password: form.password,
+                confirmPassword: form.confirmPassword,
+                acceptTerms: acceptedContract,
+            });
+
+            setSuccessMessage("Kayıt işlemi başarıyla tamamlandı 🎉");
+
+            setTimeout(() => {
+                navigate("/");
+            }, 1500);
+
+        } catch (error) {
+            if (error.response?.status === 400 && error.response.data?.errors) {
+                setFieldErrors(error.response.data.errors);
+            } else {
+                setFieldErrors({
+                    general: ["Beklenmeyen bir hata oluştu."]
+                });
+            }
+        }
+    };
+
+    const getPasswordStrength = (password) => {
+        let score = 0;
+
+        if (password.length >= 8) score++;
+        if (/[A-Z]/.test(password)) score++;
+        if (/[0-9]/.test(password)) score++;
+        if (/[^A-Za-z0-9]/.test(password)) score++;
+
+        return score;
+    };
+
 
   return (
     <div className="register-page">
@@ -21,32 +78,129 @@ function Register() {
             </p>
         </div>
 
+        {successMessage && (
+            <Alert variant="success">
+                {successMessage}
+            </Alert>
+        )}
+
+
         <div className="register-card">
             <Form>
                 <Form.Group className="mb-3">
                     <Form.Label>Firma Adı</Form.Label>
-                    <Form.Control type="text" placeholder="Örn: ABC Teknoloji A.Ş." />
+                    <Form.Control
+                        type="text"
+                        placeholder="Örn: ABC Teknoloji A.Ş."
+                        value={form.companyName}
+                        isInvalid={!!fieldErrors.CompanyName}
+                        onChange={(e) => setForm({ ...form, companyName: e.target.value })}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                        {fieldErrors.CompanyName?.[0]}
+                    </Form.Control.Feedback>
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                    <Form.Label>Ad Soyad</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Adınız soyadınız"
+                        value={form.fullName}
+                        isInvalid={!!fieldErrors.FullName}
+                        onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                        {fieldErrors.FullName?.[0]}
+                    </Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                     <Form.Label>E-Posta</Form.Label>
-                    <Form.Control type="email" placeholder="name@example.com" />
+                    <Form.Control 
+                        type="email" 
+                        placeholder="name@example.com" 
+                        value={form.email}
+                        isInvalid={!!fieldErrors.Email}
+                        onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                        {fieldErrors.Email?.[0]}
+                    </Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                    <Form.Label>Şifre</Form.Label>
+                    <Form.Label>
+                        Şifre{" "}
+                        <span className="password-info">?</span>
+                    </Form.Label>
                     <div className="password-wrapper">
                         <Form.Control
                             type={showPassword ? "text" : "password"}
                             placeholder="Bir şifre girin"
+                            value={form.password}
+                            isInvalid={!!fieldErrors.Password}
+                            onFocus={() => setShowPasswordTooltip(true)}
+                            onBlur={() => setShowPasswordTooltip(false)}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                setForm({ ...form, password: value });
+                                setPasswordStrength(getPasswordStrength(value));
+                            }}
                         />
 
-                        <span
-                            className="password-toggle"
-                            onClick={() => setShowPassword(!showPassword)}
+                        <Overlay
+                            target={document.querySelector(".password-info")}
+                            show={
+                                showPasswordTooltip &&
+                                form.password &&
+                                !fieldErrors.Password
+                            }
+                            placement="right"
                         >
-                            {showPassword ? <FiEyeOff /> : <FiEye />}
-                        </span>
+                            {(props) => (
+                                <Tooltip {...props}>
+                                    <div style={{ textAlign: "left" }}>
+                                        • En az 8 karakter<br />
+                                        • En az 1 büyük harf<br />
+                                        • En az 1 sayı<br />
+                                        • En az 1 sembol
+                                    </div>
+                                </Tooltip>
+                            )}
+                        </Overlay>
+
+                        {form.password && (
+                            <div className="password-strength">
+                                <div
+                                className={`strength-bar strength-${passwordStrength}`}
+                                />
+                                <small className="strength-text">
+                                    {passwordStrength === 0 && "Çok zayıf"}
+                                    {passwordStrength === 1 && "Zayıf"}
+                                    {passwordStrength === 2 && "Orta"}
+                                    {passwordStrength === 3 && "Güçlü"}
+                                    {passwordStrength === 4 && "Çok güçlü"}
+                                </small>
+                            </div>
+                        )}
+
+                        {!fieldErrors.Password && (
+                            <span
+                                className="password-toggle"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <FiEyeOff /> : <FiEye />}
+                            </span>
+                        )}
+                        
+                        <Form.Control.Feedback type="invalid">
+                            <ul className="mb-0 ps-3">
+                                {fieldErrors.Password?.map((msg, i) => (
+                                <li key={i}>{msg}</li>
+                                ))}
+                            </ul>
+                        </Form.Control.Feedback>
                     </div>
                 </Form.Group>
 
@@ -56,19 +210,31 @@ function Register() {
                         <Form.Control
                             type={showPassword ? "text" : "password"}
                             placeholder="Şifrenizi tekrar girin"
+                            value={form.confirmPassword}
+                            isInvalid={!!fieldErrors.ConfirmPassword}
+                            onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
                         />
 
-                        <span
-                            className="password-toggle"
-                            onClick={() => setShowPassword(!showPassword)}
-                        >
-                            {showPassword ? <FiEyeOff /> : <FiEye />}
-                        </span>
+                        {!fieldErrors.ConfirmPassword && (
+                            <span
+                                className="password-toggle"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <FiEyeOff /> : <FiEye />}
+                            </span>
+                        )}
+
+                        <Form.Control.Feedback type="invalid">
+                            {fieldErrors.ConfirmPassword?.[0]}
+                        </Form.Control.Feedback>
                     </div>
                 </Form.Group>
 
                 <Form.Group className="mb-3 contract-group">
                     <Form.Check
+                        isInvalid={!!fieldErrors.AcceptTerms}
+                        feedback={fieldErrors.AcceptTerms?.[0]}
+                        feedbackType="invalid"
                         type="checkbox"
                         id="contractCheck"
                         checked={acceptedContract}
@@ -81,15 +247,15 @@ function Register() {
                     />
                 </Form.Group>
                 <div className="register-button">
-                <Button>Hesap Oluştur</Button>
-            </div>
+                    <Button onClick={handleSubmit}>Hesap Oluştur</Button>
+                </div>
             </Form>
         </div>
 
         <div className="have-account">
             <span>
                 Zaten hesabınız var mı?{" "}
-                <button className="text-bold" onClick={() => navigate("/login")}>Giriş Yap</button>
+                <button className="text-bold" onClick={() => navigate("/")}>Giriş Yap</button>
             </span>
         </div>
 

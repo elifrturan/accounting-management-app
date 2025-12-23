@@ -16,6 +16,11 @@
   /* Border & UI */
   --color-border: #E5E7EB;
   --color-shadow: rgba(0, 0, 0, 0.1);
+
+  --color-danger: #dc3545;
+  --color-warning: #ffc107;
+  --color-success: #198754;
+  --color-white: #fff;
 }
 
 h1 {
