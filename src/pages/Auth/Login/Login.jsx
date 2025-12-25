@@ -1,12 +1,44 @@
-import { Button, Form } from "react-bootstrap"
+import { Alert, Button, Form, Spinner } from "react-bootstrap"
 import "./Login.css"
 import { useState } from "react"
 import { FiEye, FiEyeOff } from "react-icons/fi"
 import { useNavigate } from "react-router-dom";
+import { login } from "../../../api/authService";
 
 function Login() {
     const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
     const navigate = useNavigate();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+
+        try{
+            const response = await login({
+                email,
+                password
+            });
+
+            const { token } = response.data;
+
+            localStorage.setItem("token", token);
+
+            navigate("/dashboard");
+        } catch (err) {
+            setError(
+                err.response?.data?.message ||
+                "E-posta veya şifre hatalı"
+            );
+        } finally {
+            setLoading (false);
+        }
+    }
 
   return (
     <div className="login-page">
@@ -20,10 +52,20 @@ function Login() {
         </div>
 
         <div className="login-card">
+            {error && (
+                <Alert variant="danger" dismissible onClose={() => setError(null)}>
+                    {error}
+                </Alert>
+            )}
             <Form>
                 <Form.Group className="mb-3" controlId="loginEmail">
                     <Form.Label>E-Posta</Form.Label>
-                    <Form.Control type="email" placeholder="name@example.com" />
+                    <Form.Control 
+                        type="email" 
+                        placeholder="name@example.com" 
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="loginPassword">
@@ -32,6 +74,9 @@ function Login() {
                         <Form.Control
                             type={showPassword ? "text" : "password"}
                             placeholder="Şifreniz"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
 
                         <span
@@ -44,7 +89,15 @@ function Login() {
                 </Form.Group>
                 
                 <div className="login-button">
-                    <Button>Giriş Yap</Button>
+                    <Button disabled={loading} onClick={handleSubmit}>
+                        {loading ? (
+                            <>
+                                <Spinner size="sm" /> Giriş Yapılıyor...
+                            </>
+                        ) : (
+                            "Giriş Yap"
+                        )}
+                    </Button>
                 </div>
             </Form>
         </div>

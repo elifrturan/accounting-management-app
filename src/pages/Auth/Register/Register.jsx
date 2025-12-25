@@ -1,9 +1,9 @@
-import { Alert, Button, Form, Modal, Overlay, OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Alert, Button, Form, Modal, Overlay, Tooltip } from "react-bootstrap"
 import "./Register.css"
 import { useState } from "react"
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { register } from "../../api/authService";
+import { register } from "../../../api/authService";
 
 function Register() {
     const [showPassword, setShowPassword] = useState(false);
@@ -83,7 +83,6 @@ function Register() {
                 {successMessage}
             </Alert>
         )}
-
 
         <div className="register-card">
             <Form>
